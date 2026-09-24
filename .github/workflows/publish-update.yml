@@ -19,50 +19,26 @@ jobs:
       - name: Build v2.8.0 update bundle
         shell: bash
         run: |
-          set -u
-          rm -rf /tmp/meme-radar-app /tmp/v28.patch /tmp/v28-debug.txt
+          set -euo pipefail
+          rm -rf /tmp/meme-radar-app /tmp/v28-overlay.zip
           mkdir -p /tmp/meme-radar-app
-          {
-            echo "== files =="
-            ls -l dist/app_bundle.zip bootstrap28/patch.b64.gz.txt
-            echo "== unzip base =="
-          } >> /tmp/v28-debug.txt 2>&1
 
-          unzip -q dist/app_bundle.zip -d /tmp/meme-radar-app >> /tmp/v28-debug.txt 2>&1
-          U=$?
-          echo "unzip_exit=$U" >> /tmp/v28-debug.txt
+          unzip -q dist/app_bundle.zip -d /tmp/meme-radar-app
 
-          base64 -d bootstrap28/patch.b64.gz.txt | gunzip > /tmp/v28.patch
-          D=$?
-          echo "decode_exit=$D patch_bytes=$(wc -c < /tmp/v28.patch 2>/dev/null || echo 0)" >> /tmp/v28-debug.txt
-          head -n 8 /tmp/v28.patch >> /tmp/v28-debug.txt 2>&1
-
-          (
-            cd /tmp/meme-radar-app
-            patch --batch --forward -p4 < /tmp/v28.patch
-          ) >> /tmp/v28-debug.txt 2>&1
-          P=$?
-          echo "patch_exit=$P" >> /tmp/v28-debug.txt
-
-          V="$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION 2>/dev/null || true)"
-          echo "version=$V" >> /tmp/v28-debug.txt
-
-          python -m py_compile /tmp/meme-radar-app/desktop_app.py /tmp/meme-radar-app/engine.py /tmp/meme-radar-app/core/*.py >> /tmp/v28-debug.txt 2>&1
-          C=$?
-          echo "compile_exit=$C" >> /tmp/v28-debug.txt
-
-          if [ "$U" -ne 0 ] || [ "$D" -ne 0 ] || [ "$P" -ne 0 ] || [ "$C" -ne 0 ] || [ "$V" != "2.8.0" ]; then
-            cp /tmp/v28-debug.txt debug_v28.txt
-            git config user.name "Skobin Meme Radar Updater"
-            git config user.email "actions@users.noreply.github.com"
-            git add debug_v28.txt
-            git commit -m "Save v2.8 publisher diagnostics [skip ci]" || true
-            git push || true
-            cat /tmp/v28-debug.txt
+          cat bootstrap28/overlay_part_*.txt | base64 -d > /tmp/v28-overlay.zip
+          SHA_OVERLAY="$(sha256sum /tmp/v28-overlay.zip | awk '{print $1}')"
+          EXPECTED_OVERLAY="2b359f42e799e6959badb000a11b495c4ac51746aa778265529020a4ce75fe7c"
+          if [ "$SHA_OVERLAY" != "$EXPECTED_OVERLAY" ]; then
+            echo "Overlay SHA mismatch: $SHA_OVERLAY"
             exit 1
           fi
 
+          unzip -oq /tmp/v28-overlay.zip -d /tmp/meme-radar-app
+          test "$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION)" = "2.8.0"
+
+          python -m py_compile /tmp/meme-radar-app/desktop_app.py /tmp/meme-radar-app/engine.py /tmp/meme-radar-app/core/*.py
           rm -rf /tmp/meme-radar-app/__pycache__ /tmp/meme-radar-app/core/__pycache__
+
           rm -f dist/app_bundle.zip
           (
             cd /tmp/meme-radar-app
