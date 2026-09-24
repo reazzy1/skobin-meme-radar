@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "publish_v28.txt"
+      - ".github/workflows/publish-update.yml"
 
 permissions:
   contents: write
@@ -16,49 +16,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build v2.8.0 update bundle
+      - name: Build v2.9.0 update bundle
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf /tmp/meme-radar-app /tmp/v28-overlay.zip
+          rm -rf /tmp/meme-radar-app
           mkdir -p /tmp/meme-radar-app
-
-          unzip -q dist/app_bundle.zip -d /tmp/meme-radar-app
-          cat bootstrap28/overlay_part_*.txt | base64 -d > /tmp/v28-overlay.zip
-
-          # unzip -t validates ZIP structure and CRC before anything is published.
-          unzip -tq /tmp/v28-overlay.zip
-          unzip -oq /tmp/v28-overlay.zip -d /tmp/meme-radar-app
-
-          test "$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION)" = "2.8.0"
-          python -m py_compile /tmp/meme-radar-app/desktop_app.py /tmp/meme-radar-app/engine.py /tmp/meme-radar-app/core/*.py
-          rm -rf /tmp/meme-radar-app/__pycache__ /tmp/meme-radar-app/core/__pycache__
-
+          git show 5149bc99741c246a834fcea06dc7482782ed2444:dist/app_bundle.zip > /tmp/base-v28.zip
+          unzip -q /tmp/base-v28.zip -d /tmp/meme-radar-app
+          mv /tmp/meme-radar-app/desktop_app.py /tmp/meme-radar-app/desktop_app_v28.py
+          cp overlay29/desktop_app.py /tmp/meme-radar-app/desktop_app.py
+          printf '2.9.0\n' > /tmp/meme-radar-app/VERSION
           rm -f dist/app_bundle.zip
           (
             cd /tmp/meme-radar-app
             zip -qr "$GITHUB_WORKSPACE/dist/app_bundle.zip" .
           )
-
           SHA="$(sha256sum dist/app_bundle.zip | awk '{print $1}')"
           cat > update.json <<EOF
           {
-            "version": "2.8.0",
+            "version": "2.9.0",
             "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
             "sha256": "$SHA",
-            "notes": "Тест-ставки: для любой найденной монеты можно задать виртуальную сумму в долларах и отслеживать, во что она превращается. Добавлены ручной тест из радара, авто-тест $10 на ENTRY, текущая стоимость/PnL, лучший и худший момент и фиксация результата.",
-            "published_at": "2026-09-24T15:35:00+03:00",
+            "notes": "Понятная диагностика GMGN: теперь видно, почему новые Crowd-сигналы не появляются. Добавлена новая иконка окна приложения.",
+            "published_at": "2026-09-24T16:45:00+03:00",
             "min_bootstrap_version": "2.5"
           }
           EOF
 
-      - name: Publish v2.8.0
+      - name: Publish v2.9.0
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "Skobin Meme Radar Updater"
           git config user.email "actions@users.noreply.github.com"
-          rm -rf bootstrap28 publish_v28.txt debug_v28.txt
-          git add -A
-          git commit -m "Publish v2.8.0 Test Bets [skip ci]"
+          rm -rf overlay29
+          git add -A dist/app_bundle.zip update.json overlay29
+          git commit -m "Publish v2.9.0 GMGN diagnostics and icon [skip ci]"
           git push
