@@ -1,8 +1,8 @@
 {
-  "version": "2.6.0",
+  "version": "2.7.0",
   "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
-  "sha256": "d75ca1bcb545a6d70b410290fe5ccfffa77f9931daa0cda8c1be8b100b813dcd",
-  "notes": "Режим Fresh Launches: поиск только новосозданных Solana-мемкоинов через GMGN New Creation, ранний WATCH, возраст токена в радаре и более ранний ENTRY после минимального подтверждения спроса.",
-  "published_at": "2026-09-24T14:50:00+03:00",
+  "sha256": "e23cb7ff9ac3a4b9d134024abc4475acf9a833429d74c768fdca21524bfb6c38",
+  "notes": "Crowd Launch Radar: ищет свежие токены, где за первые минуты быстро растёт число holders и сделок. Добавлены Holders, Holders/min, Tx/min, crowd-фильтры и сигнал CROWD_MOMENTUM.",
+  "published_at": "2026-09-24T15:27:00+03:00",
   "min_bootstrap_version": "2.5"
 }
