@@ -20,23 +20,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OVERLAY_SHA="$(sha256sum bootstrap291/overlay.zip | awk '{print $1}')"
-          EXPECTED_OVERLAY="0416882d53a210f0cb6212eecec9a3dfba500b2291c61cccd47cd2fdf62c5866"
-          if [ "$OVERLAY_SHA" != "$EXPECTED_OVERLAY" ]; then
-            echo "Overlay SHA mismatch: $OVERLAY_SHA"
-            exit 1
-          fi
-          rm -rf /tmp/meme-radar-app /tmp/meme-radar-overlay
-          mkdir -p /tmp/meme-radar-app /tmp/meme-radar-overlay
+          rm -rf /tmp/meme-radar-app
+          mkdir -p /tmp/meme-radar-app
           unzip -q dist/app_bundle.zip -d /tmp/meme-radar-app
-          unzip -q bootstrap291/overlay.zip -d /tmp/meme-radar-overlay
-          cp -a /tmp/meme-radar-overlay/. /tmp/meme-radar-app/
+          python bootstrap291/patch.py
           test "$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION)" = "2.9.1"
+
           rm -f dist/app_bundle.zip
           (
             cd /tmp/meme-radar-app
             zip -qr "$GITHUB_WORKSPACE/dist/app_bundle.zip" .
           )
+
           SHA="$(sha256sum dist/app_bundle.zip | awk '{print $1}')"
           cat > update.json <<EOF
           {
@@ -44,7 +39,7 @@ jobs:
             "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
             "sha256": "$SHA",
             "notes": "Исправлен запуск scanner после обновления: теперь фоновый сканер сам восстанавливается после update/crash и не зависает offline из-за старого heartbeat.",
-            "published_at": "2026-09-24T17:35:00+03:00",
+            "published_at": "2026-09-24T17:40:00+03:00",
             "min_bootstrap_version": "2.5"
           }
           EOF
