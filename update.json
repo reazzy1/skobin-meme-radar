@@ -1,8 +1,8 @@
 {
-  "version": "2.8.0",
-  "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/5149bc99741c246a834fcea06dc7482782ed2444/dist/app_bundle.zip",
-  "sha256": "e23cb7ff9ac3a4b9d134024abc4475acf9a833429d74c768fdca21524bfb6c38",
-  "notes": "Test bets and Crowd Launch Radar.",
-  "published_at": "2026-09-24T16:10:00+03:00",
+  "version": "2.9.0",
+  "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
+  "sha256": "3d6aa7da3bd5fe1928a859e62900eac9b8067b0463d1cdecafb85e7cdc1b2a2a",
+  "notes": "Понятная диагностика GMGN: теперь видно, почему новые Crowd-сигналы не появляются. Добавлена новая иконка окна приложения.",
+  "published_at": "2026-09-24T16:45:00+03:00",
   "min_bootstrap_version": "2.5"
 }
