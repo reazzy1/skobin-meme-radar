@@ -1,8 +1,8 @@
 {
-  "version": "2.9.3",
+  "version": "3.0.0",
   "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
-  "sha256": "6ad9c733a347cc53d20c683fa3b5aa44f2e2ff982578bbfa97d0f06993d0dfd0",
-  "notes": "Telegram setup improved: automatic Chat ID detection after /start, local token storage, notification toggles for WATCH/ENTRY/TP/STOP/TRAIL, and Axiom links in alerts.",
-  "published_at": "2026-09-24T18:50:00+03:00",
+  "sha256": "76d6e6317e94f4f9ccb59bed6e75d70f95a6ea2b6697c0b146feddc2e9ed832b",
+  "notes": "Pre-Pump Detector: ускорение holders и транзакций, fresh buy pressure, volume velocity, net buy, ранний PRE-PUMP сигнал, усиленный risk screen, авто-тесты и Strategy Lab с 2x за 15/60 минут.",
+  "published_at": "2026-09-24T20:12:00+03:00",
   "min_bootstrap_version": "2.5"
 }
