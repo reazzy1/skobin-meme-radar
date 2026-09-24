@@ -1,0 +1,8 @@
+{
+  "version": "2.6.0",
+  "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
+  "sha256": "d2c6c45a9c021f0c3ef3c29e321facf17038f6adec90affc43f542c3d395561c",
+  "notes": "Режим Fresh Launches: поиск только новосозданных Solana-мемкоинов через GMGN New Creation, ранний WATCH, возраст токена в радаре и более ранний ENTRY после минимального подтверждения спроса.",
+  "published_at": "2026-09-24T14:50:00+03:00",
+  "min_bootstrap_version": "2.5"
+}
