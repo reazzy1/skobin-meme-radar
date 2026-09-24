@@ -16,37 +16,50 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Rebuild update bundle
+      - name: Build v2.7.0 update bundle
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p dist
-          cat bootstrap/bundle_part_*.txt > /tmp/app_bundle.b64
-          base64 -d /tmp/app_bundle.b64 > dist/app_bundle.zip
-          SHA="$(sha256sum dist/app_bundle.zip | awk '{print $1}')"
-          EXPECTED="d75ca1bcb545a6d70b410290fe5ccfffa77f9931daa0cda8c1be8b100b813dcd"
-          if [ "$SHA" != "$EXPECTED" ]; then
-            echo "SHA mismatch: $SHA"
+          OVERLAY_SHA="$(sha256sum bootstrap27/overlay.zip | awk '{print $1}')"
+          EXPECTED_OVERLAY="055b3d1542bd9eb1adc60aaa3c234c8364c306ef17ce6feff2302d49c8900c5d"
+          if [ "$OVERLAY_SHA" != "$EXPECTED_OVERLAY" ]; then
+            echo "Overlay SHA mismatch: $OVERLAY_SHA"
             exit 1
           fi
-          cat > update.json <<'EOF'
+
+          rm -rf /tmp/meme-radar-app /tmp/meme-radar-overlay
+          mkdir -p /tmp/meme-radar-app /tmp/meme-radar-overlay
+          unzip -q dist/app_bundle.zip -d /tmp/meme-radar-app
+          unzip -q bootstrap27/overlay.zip -d /tmp/meme-radar-overlay
+          cp -a /tmp/meme-radar-overlay/. /tmp/meme-radar-app/
+
+          test "$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION)" = "2.7.0"
+
+          rm -f dist/app_bundle.zip
+          (
+            cd /tmp/meme-radar-app
+            zip -qr "$GITHUB_WORKSPACE/dist/app_bundle.zip" .
+          )
+
+          SHA="$(sha256sum dist/app_bundle.zip | awk '{print $1}')"
+          cat > update.json <<EOF
           {
-            "version": "2.6.0",
+            "version": "2.7.0",
             "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
-            "sha256": "d75ca1bcb545a6d70b410290fe5ccfffa77f9931daa0cda8c1be8b100b813dcd",
-            "notes": "Режим Fresh Launches: поиск только новосозданных Solana-мемкоинов через GMGN New Creation, ранний WATCH, возраст токена в радаре и более ранний ENTRY после минимального подтверждения спроса.",
-            "published_at": "2026-09-24T14:50:00+03:00",
+            "sha256": "$SHA",
+            "notes": "Crowd Launch Radar: ищет свежие токены, где за первые минуты быстро растёт число holders и сделок. Добавлены Holders, Holders/min, Tx/min, crowd-фильтры и сигнал CROWD_MOMENTUM.",
+            "published_at": "2026-09-24T15:27:00+03:00",
             "min_bootstrap_version": "2.5"
           }
           EOF
 
-      - name: Publish bundle
+      - name: Publish v2.7.0
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "Skobin Meme Radar Updater"
           git config user.email "actions@users.noreply.github.com"
-          git rm -r bootstrap
-          git add dist/app_bundle.zip update.json
-          git commit -m "Publish v2.6.0 update [skip ci]"
+          rm -rf bootstrap27
+          git add -A dist/app_bundle.zip update.json bootstrap27
+          git commit -m "Publish v2.7.0 Crowd Launch Radar [skip ci]"
           git push
