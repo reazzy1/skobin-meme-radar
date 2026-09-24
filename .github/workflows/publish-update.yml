@@ -1,5 +1,5 @@
 name: Publish Meme Radar Update
-# retry scanner diagnostic
+# inspect bundled desktop app
 
 on:
   workflow_dispatch:
