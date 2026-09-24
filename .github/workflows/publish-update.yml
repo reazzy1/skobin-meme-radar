@@ -1,4 +1,4 @@
-name: Publish Meme Radar Update
+name: Publish Meme Radar Update\n# v3 chunks ready
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
           test "$(wc -c < bootstrap300/part_00.txt)" -eq 7500
           cat bootstrap300/part_*.txt | base64 -d | gzip -d > /tmp/v300.patch
           PATCH_SHA="$(sha256sum /tmp/v300.patch | awk '{print $1}')"
-          EXPECTED_PATCH="39a760dc2aa33933de7e1455747c950b9fb0a408aac12bbb2292cdd789a04423"
+          EXPECTED_PATCH="5a0283ed22d98a972e664cc98864261a113204629b04d1d591d4fdd6232826ef"
           if [ "$PATCH_SHA" != "$EXPECTED_PATCH" ]; then
             echo "Patch SHA mismatch: $PATCH_SHA"
             exit 1
