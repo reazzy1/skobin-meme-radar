@@ -1,1 +1,1 @@
-publish 2.8.0 test-bets overlay
+publish 2.8.0 overlay retry-final
