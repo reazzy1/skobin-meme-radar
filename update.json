@@ -1,8 +1,8 @@
 {
-  "version": "2.9.1",
+  "version": "2.9.3",
   "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
-  "sha256": "42e0175709f8efe7b545656984bbd1b5cad524972b511fdc2ab5c2d02d8345aa",
-  "notes": "Исправлен запуск scanner после обновления: теперь фоновый сканер сам восстанавливается после update/crash и не зависает offline из-за старого heartbeat.",
-  "published_at": "2026-09-24T17:40:00+03:00",
+  "sha256": "6ad9c733a347cc53d20c683fa3b5aa44f2e2ff982578bbfa97d0f06993d0dfd0",
+  "notes": "Telegram setup improved: automatic Chat ID detection after /start, local token storage, notification toggles for WATCH/ENTRY/TP/STOP/TRAIL, and Axiom links in alerts.",
+  "published_at": "2026-09-24T18:50:00+03:00",
   "min_bootstrap_version": "2.5"
 }
