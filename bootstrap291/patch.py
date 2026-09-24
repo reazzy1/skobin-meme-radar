@@ -1,54 +1,21 @@
 from pathlib import Path
-import re
 
 root = Path("/tmp/meme-radar-app")
 p = root / "desktop_app.py"
 text = p.read_text(encoding="utf-8")
 
-new_ensure = '''    def ensure_engine(self):
-        # A recent heartbeat alone is not enough: updater can stop engine.py
-        # while its last heartbeat remains fresh.
-        hb=get_runtime('heartbeat')
-        heartbeat_alive=False
-        if hb:
-            try: heartbeat_alive=now_ts()-int(hb['value'])<90
-            except: pass
-
-        pid_present = PID_FILE.exists()
-        if heartbeat_alive and pid_present:
-            return
-
-        try:
-            PID_FILE.unlink(missing_ok=True)
-        except Exception:
-            pass
-
-        pyw=Path(sys.executable)
-        cmd=[str(pyw),str(ROOT/'engine.py')]
-        kw={'cwd':str(ROOT)}
-        if os.name=='nt':
-            kw['creationflags']=0x08000000
-        try:
-            subprocess.Popen(cmd,**kw)
-            if hasattr(self,'engine_status'):
-                self.engine_status.config(text='● Scanner запускается…',fg=YELLOW)
-        except Exception as e:
-            if hasattr(self,'engine_status'):
-                self.engine_status.config(text='● Scanner ошибка запуска',fg=RED)
-            messagebox.showerror('Scanner',str(e))
-
-'''
-
-text, n = re.subn(
-    r"    def ensure_engine\(self\):.*?(?=    def stop_engine\(self\):)",
-    new_ensure,
-    text,
-    count=1,
-    flags=re.S,
-)
-if n != 1:
+# Fix the post-update scanner deadlock:
+# old heartbeat can still look fresh although updater already killed engine.py.
+if "        if alive: return" in text:
+    text = text.replace(
+        "        if alive: return",
+        "        if alive and PID_FILE.exists(): return",
+        1,
+    )
+elif "        if heartbeat_alive and pid_present:" not in text:
     raise SystemExit("ensure_engine patch target not found")
 
+# Also self-heal on every UI tick if the background scanner dies later.
 old_tick = """    def tick(self):
         try:
             self.update_status(); self.refresh_current()
