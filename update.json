@@ -1,8 +1,8 @@
 {
-  "version": "2.9.0",
+  "version": "2.9.1",
   "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
-  "sha256": "3d6aa7da3bd5fe1928a859e62900eac9b8067b0463d1cdecafb85e7cdc1b2a2a",
-  "notes": "Понятная диагностика GMGN: теперь видно, почему новые Crowd-сигналы не появляются. Добавлена новая иконка окна приложения.",
-  "published_at": "2026-09-24T16:45:00+03:00",
+  "sha256": "42e0175709f8efe7b545656984bbd1b5cad524972b511fdc2ab5c2d02d8345aa",
+  "notes": "Исправлен запуск scanner после обновления: теперь фоновый сканер сам восстанавливается после update/crash и не зависает offline из-за старого heartbeat.",
+  "published_at": "2026-09-24T17:40:00+03:00",
   "min_bootstrap_version": "2.5"
 }
