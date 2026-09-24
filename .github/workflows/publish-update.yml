@@ -1,5 +1,5 @@
 name: Publish Meme Radar Update
-# inspect bundled desktop app
+# publish wrapper scanner recovery
 
 on:
   workflow_dispatch:
