@@ -1,8 +1,8 @@
 {
-  "version": "2.9.0",
-  "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
-  "sha256": "ed7ce032eeea76624654c986d35941ca8fa8516eed8899585d238f40d97547b1",
-  "notes": "Исправлена диагностика новых монет: приложение теперь прямо показывает, когда GMGN New Creation не подключён и работает неполный DEX fallback. Добавлены кнопка установки/обновления GMGN CLI, понятная причина ошибки и новая иконка приложения.",
-  "published_at": "2026-09-24T16:40:00+03:00",
+  "version": "2.8.0",
+  "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/5149bc99741c246a834fcea06dc7482782ed2444/dist/app_bundle.zip",
+  "sha256": "e23cb7ff9ac3a4b9d134024abc4475acf9a833429d74c768fdca21524bfb6c38",
+  "notes": "Test bets and Crowd Launch Radar.",
+  "published_at": "2026-09-24T16:10:00+03:00",
   "min_bootstrap_version": "2.5"
 }
