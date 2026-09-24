@@ -1,0 +1,52 @@
+name: Publish Meme Radar Update
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/publish-update.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild update bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cat bootstrap/bundle_part_*.txt > /tmp/app_bundle.b64
+          base64 -d /tmp/app_bundle.b64 > dist/app_bundle.zip
+          SHA="$(sha256sum dist/app_bundle.zip | awk '{print $1}')"
+          EXPECTED="d75ca1bcb545a6d70b410290fe5ccfffa77f9931daa0cda8c1be8b100b813dcd"
+          if [ "$SHA" != "$EXPECTED" ]; then
+            echo "SHA mismatch: $SHA"
+            exit 1
+          fi
+          cat > update.json <<'EOF'
+          {
+            "version": "2.6.0",
+            "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
+            "sha256": "d75ca1bcb545a6d70b410290fe5ccfffa77f9931daa0cda8c1be8b100b813dcd",
+            "notes": "Режим Fresh Launches: поиск только новосозданных Solana-мемкоинов через GMGN New Creation, ранний WATCH, возраст токена в радаре и более ранний ENTRY после минимального подтверждения спроса.",
+            "published_at": "2026-09-24T14:50:00+03:00",
+            "min_bootstrap_version": "2.5"
+          }
+          EOF
+
+      - name: Publish bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Skobin Meme Radar Updater"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -r bootstrap
+          git add dist/app_bundle.zip update.json
+          git commit -m "Publish v2.6.0 update [skip ci]"
+          git push
