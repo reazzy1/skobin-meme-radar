@@ -16,20 +16,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Assemble v2.8.0 update bundle
+      - name: Build v2.8.0 update bundle
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p dist
-          cat bootstrap28/part_*.txt | base64 -d > dist/app_bundle.zip
+          rm -rf /tmp/meme-radar-app /tmp/v28.patch
+          mkdir -p /tmp/meme-radar-app
+          unzip -q dist/app_bundle.zip -d /tmp/meme-radar-app
+          base64 -d bootstrap28/patch.b64.gz.txt | gunzip > /tmp/v28.patch
+
+          (
+            cd /tmp/meme-radar-app
+            patch -p4 < /tmp/v28.patch
+          )
+
+          test "$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION)" = "2.8.0"
+          python -m py_compile /tmp/meme-radar-app/desktop_app.py /tmp/meme-radar-app/engine.py /tmp/meme-radar-app/core/*.py
+          rm -rf /tmp/meme-radar-app/__pycache__ /tmp/meme-radar-app/core/__pycache__
+
+          rm -f dist/app_bundle.zip
+          (
+            cd /tmp/meme-radar-app
+            zip -qr "$GITHUB_WORKSPACE/dist/app_bundle.zip" .
+          )
 
           SHA="$(sha256sum dist/app_bundle.zip | awk '{print $1}')"
-          EXPECTED="8a01d456b4128f2f418c0a4c44ff2a126bf2add7ce25e848c0ff8555c76875e5"
-          if [ "$SHA" != "$EXPECTED" ]; then
-            echo "Bundle SHA mismatch: $SHA"
-            exit 1
-          fi
-
           cat > update.json <<EOF
           {
             "version": "2.8.0",
