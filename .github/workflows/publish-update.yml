@@ -16,18 +16,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build v2.9.0 update bundle
+      - name: Build v2.9.1 update bundle
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf /tmp/meme-radar-app
-          mkdir -p /tmp/meme-radar-app
-          curl -fsSL "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/5149bc99741c246a834fcea06dc7482782ed2444/dist/app_bundle.zip" -o /tmp/base-v28.zip
-          echo "8a01d456b4128f2f418c0a4c44ff2a126bf2add7ce25e848c0ff8555c76875e5  /tmp/base-v28.zip" | sha256sum -c -
-          unzip -q /tmp/base-v28.zip -d /tmp/meme-radar-app
-          mv /tmp/meme-radar-app/desktop_app.py /tmp/meme-radar-app/desktop_app_v28.py
-          cp overlay29/desktop_app.py /tmp/meme-radar-app/desktop_app.py
-          printf '2.9.0\n' > /tmp/meme-radar-app/VERSION
+          OVERLAY_SHA="$(sha256sum bootstrap291/overlay.zip | awk '{print $1}')"
+          EXPECTED_OVERLAY="0416882d53a210f0cb6212eecec9a3dfba500b2291c61cccd47cd2fdf62c5866"
+          if [ "$OVERLAY_SHA" != "$EXPECTED_OVERLAY" ]; then
+            echo "Overlay SHA mismatch: $OVERLAY_SHA"
+            exit 1
+          fi
+          rm -rf /tmp/meme-radar-app /tmp/meme-radar-overlay
+          mkdir -p /tmp/meme-radar-app /tmp/meme-radar-overlay
+          unzip -q dist/app_bundle.zip -d /tmp/meme-radar-app
+          unzip -q bootstrap291/overlay.zip -d /tmp/meme-radar-overlay
+          cp -a /tmp/meme-radar-overlay/. /tmp/meme-radar-app/
+          test "$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION)" = "2.9.1"
           rm -f dist/app_bundle.zip
           (
             cd /tmp/meme-radar-app
@@ -36,22 +40,22 @@ jobs:
           SHA="$(sha256sum dist/app_bundle.zip | awk '{print $1}')"
           cat > update.json <<EOF
           {
-            "version": "2.9.0",
+            "version": "2.9.1",
             "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
             "sha256": "$SHA",
-            "notes": "Понятная диагностика GMGN: теперь видно, почему новые Crowd-сигналы не появляются. Добавлена новая иконка окна приложения.",
-            "published_at": "2026-09-24T16:45:00+03:00",
+            "notes": "Исправлен запуск scanner после обновления: теперь фоновый сканер сам восстанавливается после update/crash и не зависает offline из-за старого heartbeat.",
+            "published_at": "2026-09-24T17:35:00+03:00",
             "min_bootstrap_version": "2.5"
           }
           EOF
 
-      - name: Publish v2.9.0
+      - name: Publish v2.9.1
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "Skobin Meme Radar Updater"
           git config user.email "actions@users.noreply.github.com"
-          rm -rf overlay29
-          git add -A dist/app_bundle.zip update.json overlay29
-          git commit -m "Publish v2.9.0 GMGN diagnostics and icon [skip ci]"
+          rm -rf bootstrap291
+          git add -A dist/app_bundle.zip update.json bootstrap291
+          git commit -m "Publish v2.9.1 scanner self-heal [skip ci]"
           git push
