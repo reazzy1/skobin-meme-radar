@@ -1,4 +1,5 @@
 name: Publish Meme Radar Update
+# retry scanner patch v2
 
 on:
   workflow_dispatch:
