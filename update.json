@@ -1,8 +1,8 @@
 {
-  "version": "2.7.0",
+  "version": "2.8.0",
   "bundle_url": "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/main/dist/app_bundle.zip",
-  "sha256": "e23cb7ff9ac3a4b9d134024abc4475acf9a833429d74c768fdca21524bfb6c38",
-  "notes": "Crowd Launch Radar: ищет свежие токены, где за первые минуты быстро растёт число holders и сделок. Добавлены Holders, Holders/min, Tx/min, crowd-фильтры и сигнал CROWD_MOMENTUM.",
-  "published_at": "2026-09-24T15:27:00+03:00",
+  "sha256": "8a01d456b4128f2f418c0a4c44ff2a126bf2add7ce25e848c0ff8555c76875e5",
+  "notes": "Добавлены тест-ставки: можно выбрать найденную монету, указать виртуальную сумму в долларах и отслеживать, во что она превращается со временем. Есть текущая стоимость, PnL, лучший/худший момент, ручное закрытие и автоматический тест на каждый ENTRY.",
+  "published_at": "2026-09-24T16:10:00+03:00",
   "min_bootstrap_version": "2.5"
 }
