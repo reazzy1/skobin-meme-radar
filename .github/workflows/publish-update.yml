@@ -27,7 +27,7 @@ jobs:
 
           (
             cd /tmp/meme-radar-app
-            patch -p4 < /tmp/v28.patch
+            patch -p3 < /tmp/v28.patch
           )
 
           test "$(tr -d '\r\n' < /tmp/meme-radar-app/VERSION)" = "2.8.0"
