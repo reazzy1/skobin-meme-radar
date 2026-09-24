@@ -22,7 +22,8 @@ jobs:
           set -euo pipefail
           rm -rf /tmp/meme-radar-app
           mkdir -p /tmp/meme-radar-app
-          curl -fsSL "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/5149bc99741c246a834fcea06dc7482782ed2444/dist/app_bundle.zip" -o /tmp/base-v28.zip\n          echo "8a01d456b4128f2f418c0a4c44ff2a126bf2add7ce25e848c0ff8555c76875e5  /tmp/base-v28.zip" | sha256sum -c -
+          curl -fsSL "https://raw.githubusercontent.com/reazzy1/skobin-meme-radar/5149bc99741c246a834fcea06dc7482782ed2444/dist/app_bundle.zip" -o /tmp/base-v28.zip
+          echo "8a01d456b4128f2f418c0a4c44ff2a126bf2add7ce25e848c0ff8555c76875e5  /tmp/base-v28.zip" | sha256sum -c -
           unzip -q /tmp/base-v28.zip -d /tmp/meme-radar-app
           mv /tmp/meme-radar-app/desktop_app.py /tmp/meme-radar-app/desktop_app_v28.py
           cp overlay29/desktop_app.py /tmp/meme-radar-app/desktop_app.py
